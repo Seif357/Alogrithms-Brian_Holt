@@ -9,42 +9,41 @@
 
 */
 
-function longestnumbers(array){
-let longestnumber=0;
-for (let index = 0; index < array.length; index++) {
-  if(array[index].toString().length > longestnumber)
-    {
-      longestnumber=array[index].toString().length;
-    }
-}
-return longestnumber;
+function getDigit(number, place, longestNumber) {
+  const string = number.toString();
+  const size = string.length;
+
+  const mod = longestNumber - size;
+  return string[place - mod] || 0;
 }
 
-
-  function getdigit(number,place,longestnumber){
-    for (let i = place; i < longestnumber; i++) {
-      number=number%10^longestnumber-(1+i)
-    }
-    return number
+function findLongestNumber(array) {
+  let longest = 0;
+  for (let i = 0; i < array.length; i++) {
+    const currentLength = array[i].toString().length;
+    longest = currentLength > longest ? currentLength : longest;
   }
-
-
+  return longest;
+}
 
 function radixSort(array) {
-  let buckets;
-  const longestnumber = longestnumbers(array);
-  buckets = Array.from({ length: 10 }, () => []);
-  for (let i = 0; i < longestnumber; i++) {
-    // create 10 empty buckets  
-    for (let index = 0; index < array.length; index++) {
-      buckets[ getdigit(array[index], i, longestnumber)].push(array.shift());
+  const longestNumber = findLongestNumber(array);
+
+  const buckets = new Array(10).fill().map(() => []); // make an array of 10 arrays
+
+  for (let i = longestNumber - 1; i >= 0; i--) {
+    while (array.length) {
+      const current = array.shift();
+      buckets[getDigit(current, i, longestNumber)].push(current);
     }
+
     for (let j = 0; j < 10; j++) {
       while (buckets[j].length) {
         array.push(buckets[j].shift());
       }
     }
   }
+
   return array;
 }
 // unit tests
